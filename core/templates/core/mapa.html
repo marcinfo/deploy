@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %} Visualização no mapa.{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- Page Content -->
+
+<p id="demo"></p>
+<h5 onload="getLocation()">Para localização aproximada <button onclick="getLocation()">Clique Aqui</button> .</h5>
+
+<script>
+var x=document.getElementById("demo");
+function getLocation()
+  {
+  if (navigator.geolocation)
+    {
+    navigator.geolocation.getCurrentPosition(showPosition,showError);
+    }
+  else{x.innerHTML="Seu browser não suporta Geolocalização.";}
+  }
+function showPosition(position)
+  {
+
+  window.location.href = "/mapa/?lat=" +  position.coords.latitude +"&lon=" + position.coords.longitude;
+  }
+function showError(error)
+  {
+  switch(error.code)
+    {
+    case error.PERMISSION_DENIED:
+      x.innerHTML="Usuário rejeitou a solicitação de Geolocalização."
+      break;
+    case error.POSITION_UNAVAILABLE:
+      x.innerHTML="Localização indisponível."
+      break;
+    case error.TIMEOUT:
+      x.innerHTML="A requisição expirou."
+      break;
+    case error.UNKNOWN_ERROR:
+      x.innerHTML="Algum erro desconhecido aconteceu."
+      break;
+    }
+  }
+</script>
+<div align="center" >
+    {{ m|safe }}
+</div>
+</body>
+</html>
+{% endblock  %}

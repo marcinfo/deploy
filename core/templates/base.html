@@ -1,0 +1,61 @@
+{% load static %}
+
+<html lang="pt-br">
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="="UTF-8>
+  <title>{% block title %}{% endblock %}</title>
+  <link href="{% static "css/base.css" %}" rel="stylesheet">
+
+</head>
+<body>
+  <div id="header">
+    <span class="logo">Monitor de Pragas</span>
+     <ul class="menu">
+       <li {% if section == "index" %}class="selected"{% endif %}>
+            <a href="{% url "index" %}">Inicio</a>
+       </li>
+      <li {% if section == "mapa" %}class="selected"{% endif %}>
+          <a href="{% url "mapa" %}">Mapa</a>
+      </li>
+
+     </ul>
+    {% if request.user.is_authenticated %}
+    <ul class="menu">
+      <li {% if section == "cadastrar" %}class="selected"{% endif %}>
+        <a href="{% url "cadastrar" %}">Cadastrar</a>
+      </li>
+      <li {% if section == "dashboard" %}class="selected"{% endif %}>
+        <a href="{% url "dashboard" %}">Minha Conta</a>
+      </li>
+    </ul>
+  {% endif %}
+  <span class="user">
+    {% if request.user.is_authenticated %}
+      Olá,  {{ request.user.first_name }}.
+      <a href="{% url "logout" %}">   Sair</a>
+
+    {% else %}
+      <a href="{% url "login" %}"> Entrar</a>
+    {% endif %}
+  </span>
+  </div>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="{{ message.tags }}">
+          {{ message|safe }}
+            <a href="#" class="close">x</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<body>
+<div class="row">
+    <div class="card green">
+        <h>Total de relatos: </h>
+        <p>{{total}}</p>
+    </div>
+    <div class="card red">
+        <h>Hectares</h>
+        <p>{{total_hectares}}</p>
+
+    </div>
+    <div class="card blue">
+        <h>Prejuizo </h>
+        <p>R$ {{total_prejuizo|floatformat:2}}</p>
+
+    </div>
+
+    <div class="card negativo">
+        <h>tipos de pragas:</h>
+        <p>{{tipo_praga}}</p>
+
+    </div>
+    <div class="card green">
+        <h>Culturas atacadas:</h>
+
+        <p>{{tipo_cultura}}</p>
+
+    </div>
+</div>
+<div class="row">
+
+
+</div>
+
+
+</body>
+</html>
+
+
+{% endblock  %}
