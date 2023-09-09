@@ -127,10 +127,10 @@ def cadastrarForm(request):
         }
         return render(request, 'core/cadastrar.html',context=context)
     else:
-        form = RegistrosModelForm(request.POST)
+        form = RegistrosModelForm(request.POST, request.FILES)
         if form.is_valid():
             regitro = form.save(commit=False)
-            regitro.Usuário == request.user
+            #regitro.Usuário == request.user
             registro = form.save()
             form = RegistrosModelForm()
 
@@ -170,7 +170,7 @@ def mostra_ocorrencia(request):
             lista_distancia += [distan]
         geo_loc_ocorrencias['distancia'] = lista_distancia
         geo_loc_ocorrencias = geo_loc_ocorrencias.nsmallest(100, 'distancia')
-        geo_loc_ocorrencias['poupup']= ' data '+geo_loc_ocorrencias['Data da Ocorrência'].map(str)+' '+geo_loc_ocorrencias['Tipo de Praga']+ \
+        geo_loc_ocorrencias['poupup']= ' data '+geo_loc_ocorrencias['Data da Ocorrência'].map(str)+' '+geo_loc_ocorrencias['praga']+ \
                           ' '+geo_loc_ocorrencias['Observações']+ ' distancia=  '+geo_loc_ocorrencias['distancia'].map(str) +'km'
 
         m = folium.Map(location=[l1, l2], zoom_start=zoom, control_scale=True, width=1090, height=450)
