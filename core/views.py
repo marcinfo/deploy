@@ -88,7 +88,7 @@ def edit(request):
 
 
 def index(request):
-    registros = Tb_Registros.objects.select_related('praga').all().values()
+    registros = Tb_Registros.objects.select_related('praga').all().filter(ativo=True).values()
 
 
     contador =registros.count()
@@ -130,7 +130,7 @@ def cadastrarForm(request):
         form = RegistrosModelForm(request.POST, request.FILES)
         if form.is_valid():
             regitro = form.save(commit=False)
-            #regitro.Usuário == request.user
+            regitro.usuario = request.user
             registro = form.save()
             form = RegistrosModelForm()
 

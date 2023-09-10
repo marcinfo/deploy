@@ -10,7 +10,7 @@ CONTROLE_CHOICE=(
 )
 class Base(models.Model):
     inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True)
-    atualizado = models.DateTimeField(verbose_name="Atualizado em:", auto_now_add=True, null=True)
+    #atualizado = models.DateTimeField(verbose_name="Atualizado em:", auto_now_add=True, null=True)
     ativo = models.BooleanField('Ativo?', default=True)
 
     class Meta:
@@ -54,7 +54,7 @@ lista_cultura = TbPragas.objects.select_related('cultura').values_list('cultura'
 
 class Tb_Registros(Base):
     id_ocorrencia = models.AutoField(primary_key=True)
-    usuario =  models.CharField(name='Usuário',max_length=45)
+    usuario =  models.CharField(max_length=45)
     data_registro =  models.DateField(name='Data da Ocorrência',help_text='Data em que foi visualizada a praga.')
     praga = models.CharField(max_length=40,choices=lista_praga,help_text='Selecione qual o tipo de praga esta contaminando.')
     cultura =  models.CharField(name='Cultura',max_length=45,choices=lista_cultura,help_text='Qual plantação foi contaminada?')
@@ -72,7 +72,7 @@ class Tb_Registros(Base):
         verbose_name = "Tabela de Registro"
         verbose_name_plural = "Tabela de Registros"
     def __str__(self):
-        return self.Usuário
+        return self.usuario
 
 class Ocorrencias(Base):
     id_ocorrencia = models.AutoField(primary_key=True)
