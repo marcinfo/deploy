@@ -6,11 +6,10 @@ from django.contrib import messages
 from .models import Profile,Tb_Registros,TbPragas
 from .forms import LoginForm, UserRegistrationForm, \
                    UserEditForm, ProfileEditForm,RegistrosModelForm
-
 import pandas as pd
 from django.db.models import Avg,Count,Max
 import folium
-
+import matplotlib.pyplot as plt
 from geopy import distance
 
 def user_login(request):
@@ -88,26 +87,31 @@ def edit(request):
 
 
 def index(request):
-    registros = Tb_Registros.objects.select_related('praga').all().filter(ativo=True).values()
+    registros = Tb_Registros.objects.select_related('usuario').all().filter(ativo=True).values()
 
 
     contador =registros.count()
     if contador != 0:
-        cultura_afetada = Tb_Registros.objects.values('Cultura').annotate(total=Count('Cultura')).order_by("-Cultura")
+        cultura_afetada = Tb_Registros.objects.values('cultura').annotate(total=Count('cultura')).order_by("-cultura")
         praga_afetada = Tb_Registros.objects.values('praga').annotate(total=Count('praga')).order_by("-total")
-
+        grupo_praga = pd.DataFrame(praga_afetada)
+        grupo_cultura = pd.DataFrame(cultura_afetada)
+        print(grupo_cultura)
+        print(grupo_praga)
 
         reg_ocorrencias = pd.DataFrame(registros)
-        maior_frequencia = reg_ocorrencias
+
         total=reg_ocorrencias['id_ocorrencia'].count()
-        total_prejuizo = reg_ocorrencias['Total do prejuizo R$'].sum()
-        total_hectares = reg_ocorrencias['Quantidade de hectar afetado'].sum()
+        total_prejuizo = reg_ocorrencias['prejuizo'].sum()
+        total_hectares = reg_ocorrencias['hectares'].sum()
         tipo_praga=reg_ocorrencias.groupby('praga')['praga'].unique().count()
-        tipo_cultura = reg_ocorrencias.groupby('Cultura')['Cultura'].unique().count()
-        praga_afetada=total
+        tipo_cultura = reg_ocorrencias.groupby('cultura')['cultura'].unique().count()
+
+
+
         context = {
             'total': total, 'total_prejuizo': total_prejuizo, 'tipo_praga': tipo_praga,'total_hectares': total_hectares,
-            'praga_afetada':praga_afetada,'tipo_cultura': tipo_cultura
+            'praga_afetada':praga_afetada,'tipo_cultura': tipo_cultura,'plt':plt,
         }
         return render(request, 'core/index.html',context)
 

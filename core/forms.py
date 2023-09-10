@@ -41,6 +41,6 @@ class ProfileEditForm(forms.ModelForm):
 class RegistrosModelForm(forms.ModelForm):
     class Meta:
         model = Tb_Registros
-        fields = ('Nome da Propriedade afetada','Cultura','praga','Data da Ocorrência','status','Total do prejuizo R$',
-                  'Quantidade de hectar afetado','latitude','longitude','imagem','Observações')
+        fields = ( 'Data da Ocorrência','cultura', 'praga','status', 'nome_propriedade','latitude', 'longitude',
+                    'hectares', 'prejuizo', 'imagem', 'observacao')
 

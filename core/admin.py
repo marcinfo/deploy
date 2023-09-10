@@ -9,8 +9,8 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Tb_Registros)
 class Tb_OcorrenciasAdmin(admin.ModelAdmin):
-    list_display = ['id_ocorrencia','ativo','usuario','inserido', 'Data da Ocorrência','Cultura', 'praga','status','imagem', 'Nome da Propriedade afetada',
-                    'Quantidade de hectar afetado', 'Total do prejuizo R$', 'latitude', 'longitude', 'Observações']
+    list_display = ['id_ocorrencia','ativo','usuario','inserido', 'Data da Ocorrência','cultura', 'praga','status','imagem', 'nome_propriedade',
+                    'hectares', 'prejuizo', 'latitude', 'longitude', 'observacao']
     search_fields = ('id_ocorrencia','inserido', 'praga')
     ordering = ['praga']
 
