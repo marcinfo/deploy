@@ -7,9 +7,12 @@ from .models import Profile,Tb_Registros,TbPragas
 from .forms import LoginForm, UserRegistrationForm, \
                    UserEditForm, ProfileEditForm,RegistrosModelForm
 import pandas as pd
-from django.db.models import Avg,Count,Max
+from django.db.models import Avg,Count,Max,Min,Sum
+
 import folium
-import matplotlib.pyplot as plt
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 from geopy import distance
 
 def user_login(request):
@@ -92,29 +95,91 @@ def index(request):
 
     contador =registros.count()
     if contador != 0:
-        cultura_afetada = Tb_Registros.objects.values('cultura').annotate(total=Count('cultura')).order_by("-cultura")
+
         praga_afetada = Tb_Registros.objects.values('praga').annotate(total=Count('praga')).order_by("-total")
-        grupo_praga = pd.DataFrame(praga_afetada)
-        grupo_cultura = pd.DataFrame(cultura_afetada)
-        print(grupo_cultura)
-        print(grupo_praga)
+        status_praga = Tb_Registros.objects.values('status',).annotate(total=Count('status')).order_by("-total")
+
+        grupo_status =pd.DataFrame(status_praga)
+
 
         reg_ocorrencias = pd.DataFrame(registros)
-
         total=reg_ocorrencias['id_ocorrencia'].count()
         total_prejuizo = reg_ocorrencias['prejuizo'].sum()
         total_hectares = reg_ocorrencias['hectares'].sum()
         tipo_praga=reg_ocorrencias.groupby('praga')['praga'].unique().count()
         tipo_cultura = reg_ocorrencias.groupby('cultura')['cultura'].unique().count()
+        dados = reg_ocorrencias[['praga','hectares','prejuizo','cultura','status']]
+
+        print(dados)
+
+        config={'displayModeBar':False}
+        fonte_titulo='Times New Roman'
+        largura= 400
+        altura=200
+        graf_grupo_cultura = px.histogram(dados, x=dados['praga'],
+                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['steelblue'])
+        graf_grupo_cultura.update_layout(title={'text':'Ocorrências de Pragas.','font':{'size':16}}, title_font_family=fonte_titulo,
+                                         title_font_color='darkgrey',title_y=0.9,title_x=0.5)
+        graf_grupo_cultura.update_layout(title_font_family='classic-roman',font_color='grey',
+                                         yaxis_title={'text':'ocorrências','font':{'size':12}})
+        chart_graf_grupo_cultura = graf_grupo_cultura.to_html(config = config)
+
+        graf_grupo_praga = px.histogram(dados, x=dados['cultura'],
+                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['steelblue'])
+        graf_grupo_praga.update_layout(title={'text':'Cultura Atacada.','font':{'size':16}}, title_font_family=fonte_titulo,
+                                         title_font_color='darkgrey',title_y=0.9,title_x=0.5)
+        graf_grupo_praga.update_layout(title_font_family='classic-roman',font_color='grey',
+                                         yaxis_title={'text':'ocorrências','font':{'size':12}},
+                                         xaxis_title={'text': 'cultura', 'font': {'size': 12}})
+        chart_graf_grupo_praga = graf_grupo_praga.to_html(config = config)
 
 
+
+        graf_grupo_status= px.histogram(dados, y=dados['status'],
+                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['red'])
+        graf_grupo_status.update_layout(title={'text':'Status das Pragas.','font':{'size':16}}, title_font_family=fonte_titulo,
+                                         title_font_color='darkgrey',title_y=0.9,title_x=0.5)
+        graf_grupo_status.update_layout(title_font_family='classic-roman',font_color='grey',
+                                         yaxis_title={'text':'total','font':{'size':12}},
+                                         xaxis_title={'text': 'status', 'font': {'size': 12}})
+        chart_graf_grupo_status = graf_grupo_status.to_html(config = config)
+
+        graf_grupo_praga_prejuizo= px.histogram(dados, x=dados['praga'], y=dados['prejuizo'].astype(float),
+                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['red'])
+        graf_grupo_praga_prejuizo.update_layout(title={'text':'Prejuizo por Praga.','font':{'size':16}}, title_font_family=fonte_titulo,
+                                         title_font_color='darkgrey',title_y=0.9,title_x=0.5)
+        graf_grupo_praga_prejuizo.update_layout(title_font_family='classic-roman',font_color='grey',
+                                         yaxis_title={'text':'R$','font':{'size':12}},
+                                         xaxis_title={'text': 'praga', 'font': {'size': 12}})
+        chart_graf_grupo_praga_prejuizo = graf_grupo_praga_prejuizo.to_html(config = config)
+
+        graf_grupo_cultura_prejuizo= px.histogram(dados, x=dados['cultura'], y=dados['prejuizo'].astype(float),
+                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['red'])
+        graf_grupo_cultura_prejuizo.update_layout(title={'text':'Prejuizo por Cultura.','font':{'size':16}}, title_font_family=fonte_titulo,
+                                         title_font_color='darkgrey',title_y=0.9,title_x=0.5)
+        graf_grupo_cultura_prejuizo.update_layout(title_font_family='classic-roman',font_color='grey',
+                                         yaxis_title={'text':'R$','font':{'size':12}},
+                                         xaxis_title={'text': 'cultura', 'font': {'size': 12}})
+        chart_graf_grupo_cultura_prejuizo = graf_grupo_cultura_prejuizo.to_html(config = config)
+
+        graf_grupo_hectar_prejuizo= px.histogram(dados, x=dados['hectares'], y=dados['prejuizo'].astype(float),
+                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['red'])
+        graf_grupo_hectar_prejuizo.update_layout(title={'text':'Prejuizo por hectar.','font':{'size':16}}, title_font_family=fonte_titulo,
+                                         title_font_color='darkgrey',title_y=0.9,title_x=0.5)
+        graf_grupo_hectar_prejuizo.update_layout(title_font_family='classic-roman',font_color='grey',
+                                         yaxis_title={'text':'R$','font':{'size':12}},
+                                         xaxis_title={'text': 'hectares', 'font': {'size': 12}})
+        graf_grupo_hectar_prejuizo = graf_grupo_hectar_prejuizo.to_html(config = config)
 
         context = {
             'total': total, 'total_prejuizo': total_prejuizo, 'tipo_praga': tipo_praga,'total_hectares': total_hectares,
-            'praga_afetada':praga_afetada,'tipo_cultura': tipo_cultura,'plt':plt,
+            'praga_afetada':praga_afetada,'tipo_cultura': tipo_cultura,'chart_graf_grupo_cultura':chart_graf_grupo_cultura,
+            'chart_graf_grupo_praga':chart_graf_grupo_praga,'chart_graf_grupo_status':chart_graf_grupo_status,
+            'chart_graf_grupo_praga_prejuizo':chart_graf_grupo_praga_prejuizo,
+            'chart_graf_grupo_cultura_prejuizo':chart_graf_grupo_cultura_prejuizo,
+            'graf_grupo_hectar_prejuizo':graf_grupo_hectar_prejuizo,
         }
         return render(request, 'core/index.html',context)
-
     else:
         print(contador)
         messages.info(request,'Não existem informações para exibir!')
@@ -175,7 +240,7 @@ def mostra_ocorrencia(request):
         geo_loc_ocorrencias['distancia'] = lista_distancia
         geo_loc_ocorrencias = geo_loc_ocorrencias.nsmallest(100, 'distancia')
         geo_loc_ocorrencias['poupup']= ' data '+geo_loc_ocorrencias['Data da Ocorrência'].map(str)+' '+geo_loc_ocorrencias['praga']+ \
-                          ' '+geo_loc_ocorrencias['Observações']+ ' distancia=  '+geo_loc_ocorrencias['distancia'].map(str) +'km'
+                          ' '+geo_loc_ocorrencias['observacao']+ ' distancia=  '+geo_loc_ocorrencias['distancia'].map(str) +'km'
 
         m = folium.Map(location=[l1, l2], zoom_start=zoom, control_scale=True, width=1090, height=450)
         folium.Marker(location=[float(l1), float(l2)]).add_to(m)

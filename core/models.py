@@ -5,8 +5,8 @@ from datetime import datetime
 
 
 CONTROLE_CHOICE=(
-    ("s",'Sim'),
-    ("N","Não"),
+    ("Controlada",'Controlada'),
+    ("Fora de Controle","Fora de Controle"),
 )
 class Base(models.Model):
     inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True)
