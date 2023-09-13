@@ -9,8 +9,8 @@ CONTROLE_CHOICE=(
     ("Fora de Controle","Fora de Controle"),
 )
 class Base(models.Model):
-    inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True)
-    #atualizado = models.DateTimeField(verbose_name="Atualizado em:", auto_now_add=True, null=True)
+    inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True,editable=False)
+    atualizado = models.DateTimeField(verbose_name="Atualizado em:", auto_now=True, null=True)
     ativo = models.BooleanField('Ativo?', default=True)
 
     class Meta:

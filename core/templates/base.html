@@ -19,7 +19,9 @@
       <li {% if section == "mapa" %}class="selected"{% endif %}>
           <a href="{% url "mapa" %}">Mapa</a>
       </li>
-
+      <li {% if section == "ocorrencias" %}class="selected"{% endif %}>
+          <a href="{% url "ocorrencias" %}">Ocorrências</a>
+      </li>
      </ul>
     {% if request.user.is_authenticated %}
     <ul class="menu">

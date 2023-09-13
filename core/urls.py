@@ -10,5 +10,6 @@ urlpatterns = [
     path('edit/', views.edit, name='edit'),
     path('mapa/', views.mostra_ocorrencia, name='mapa'),
     path('cadastrar/', views.cadastrarForm, name='cadastrar'),
+    path('ocorrencias/', views.mostra_tabela, name='ocorrencias'),
 
 ]

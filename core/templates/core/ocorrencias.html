@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Ocorrências{% endblock %}
+
+{% block content %}
+
+<html>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>Data de Registro</th>
+          <th>Propriedade</th>
+          <th>Cultura</th>
+          <th>Praga</th>
+          <th>Hectares afetados</th>
+          <th>Prejuizo R$</th>
+          <th>Status</th>
+          <th>Imagem</th>
+          <th>Observações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reg in registros %}
+        <tr>
+          <td>{{reg.id_ocorrencia}}</td>
+          <td>{{reg.inserido}}</td>
+          <td>{{reg.nome_propriedade}}</td>
+          <td>{{reg.cultura}}</td>
+          <td>{{reg.praga}}</td>
+          <td>{{reg.hectares}}</td>
+          <td>{{reg.prejuizo}}</td>
+          <td>{{reg.status}}</td>
+          <td><a href="/media/{{reg.imagem}}">imagem</a></td>
+          <td>{{reg.observaacao}}</td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
+
+  <form >
+<div>
+
+</div>
+
+  </form>
+{% endblock %}
