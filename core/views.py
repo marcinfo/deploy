@@ -280,8 +280,6 @@ def mostra_tabela(request):
         registros = registros.filter(
             inserido__date__range=[start_date,end_date]
         )
-
-
     tabela_paginator = Paginator(registros, 5)
     page_num = request.GET.get('page')
     page = tabela_paginator.get_page((page_num))
