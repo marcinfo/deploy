@@ -289,8 +289,6 @@ def mostra_tabela(request):
     context = {
         'page': page }
     return render(request, 'core/ocorrencias.html', context)
-
-
 @login_required
 def visualizar_imagem(request,pk):
     registro = Tb_Registros.objects.select_related('usuario').filter(ativo=True, id_ocorrencia=pk).\
