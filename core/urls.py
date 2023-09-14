@@ -11,5 +11,5 @@ urlpatterns = [
     path('mapa/', views.mostra_ocorrencia, name='mapa'),
     path('cadastrar/', views.cadastrarForm, name='cadastrar'),
     path('ocorrencias/', views.mostra_tabela, name='ocorrencias'),
-
+    path('visualizar_imagem/<int:pk>', views.visualizar_imagem, name='visualizar_imagem'),
 ]

@@ -37,7 +37,7 @@
 
           {% for reg in page.object_list %}
           <tr>
-            <td>{{reg.id_ocorrencia}}</td>
+            <td><a href="{% url 'visualizar_imagem' reg.id_ocorrencia %}">{{reg.id_ocorrencia}}</a></td>
             <td>{{reg.inserido|date:'d-m-Y H:i'}}</td>
             <td>{{reg.nome_propriedade}}</td>
             <td>{{reg.cultura}}</td>
@@ -45,7 +45,7 @@
             <td>{{reg.hectares}}</td>
             <td>{{reg.prejuizo|floatformat:2}}</td>
             <td>{{reg.status}}</td>
-            <td><a href="/media/{{reg.imagem}}">Click aqui</a></td>
+            <td>{{reg.imagem}}</td>
             <td nowrap="true">{{reg.observacao}}</td>
           </tr>
           {% endfor %}

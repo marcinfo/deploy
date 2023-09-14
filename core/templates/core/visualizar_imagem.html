@@ -6,13 +6,23 @@
 
 <html>
   <body>
-      </body>
-</html>
+
+<center>
 
   <form >
 <div>
-
+    {% for reg in registro %}
+        <h2>Nome da Propriedade: {{reg.nome_propriedade}}</h2>
+        <h3>Data do Registro: {{reg.inserido|date:'d-m-Y H:i'}}</h3>
+        <h3>Cultura Afetada: {{reg.cultura}}</h3>
+        <h3>Praga: {{reg.praga}}</h3>
+        <h3>Prejuizo R$: {{reg.prejuizo}}</h3>
+        <img src=/media/{{reg.imagem}} class="img-responsive" />
+        <p>{{reg.observacao}} </p>
+    {% endfor %}
 </div>
 
   </form>
+    </center>
+</body>
 {% endblock %}

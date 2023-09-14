@@ -25,6 +25,7 @@
      </ul>
     {% if request.user.is_authenticated %}
     <ul class="menu">
+
       <li {% if section == "cadastrar" %}class="selected"{% endif %}>
         <a href="{% url "cadastrar" %}">Cadastrar</a>
       </li>
