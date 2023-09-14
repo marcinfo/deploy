@@ -8,7 +8,7 @@ from .forms import LoginForm, UserRegistrationForm, \
                    UserEditForm, ProfileEditForm,RegistrosModelForm
 import pandas as pd
 from django.db.models import Avg,Count,Max,Min,Sum
-
+from django.core.paginator import Paginator
 import folium
 import plotly.express as px
 from plotly.subplots import make_subplots
@@ -97,6 +97,7 @@ def index(request):
     if contador != 0:
 
         praga_afetada = Tb_Registros.objects.values('praga').annotate(total=Count('praga')).order_by("-total")
+        status_conta = Tb_Registros.objects.values('status').annotate(total=Count('praga')).order_by("-total")
         dados = pd.DataFrame(registros)
 
 
@@ -136,14 +137,15 @@ def index(request):
 
 
 
-        graf_grupo_status= px.histogram(registros, y=['status'],
-                      height=altura,width=largura,template='simple_white',color_discrete_map={"Fora de Controle":'#66CDAA',"Controlada":'darkblue'})
+        graf_grupo_status= px.pie(status_conta, values='total', names='status',height=320,width=320, hole=.6)
+
         graf_grupo_status.update_layout(title={'text':'Status das Pragas.','font':{'size':16}}, title_font_family=fonte_titulo,
                                          title_font_color='darkgrey',title_y=0.9,title_x=0.5)
-        graf_grupo_status.update_layout(title_font_family='classic-roman',font_color='grey',showlegend=False,
+        graf_grupo_status.update_layout(title_font_family='classic-roman',font_color='grey',showlegend=True,
                                          yaxis_title={'text':'total','font':{'size':12}},
                                          xaxis_title={'text': 'status', 'font': {'size': 12}})
         chart_graf_grupo_status = graf_grupo_status.to_html(config = config)
+
 
         graf_grupo_praga_prejuizo= px.histogram(dados, x=dados['praga'], y=dados['prejuizo'].astype(float),
                       height=altura,width=largura,template='simple_white',color_discrete_sequence=['#66CDAA'])
@@ -164,7 +166,7 @@ def index(request):
         chart_graf_grupo_cultura_prejuizo = graf_grupo_cultura_prejuizo.to_html(config = config)
 
         graf_grupo_hectar_prejuizo= px.histogram(registros,  y=['prejuizo'],
-                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['#FF7F24'])
+                      height=altura,width=largura,template='simple_white',color_discrete_sequence=['Purple'])
         graf_grupo_hectar_prejuizo.update_layout(title={'text':'Prejuizo por hectar.','font':{'size':16}}, title_font_family=fonte_titulo,
                                          title_font_color='darkgrey',title_y=0.9,title_x=0.5)
         graf_grupo_hectar_prejuizo.update_layout(title_font_family='classic-roman',font_color='grey',showlegend=False,
@@ -240,7 +242,7 @@ def mostra_ocorrencia(request):
             lista_distancia += [distan]
         geo_loc_ocorrencias['distancia'] = lista_distancia
         geo_loc_ocorrencias = geo_loc_ocorrencias.nsmallest(100, 'distancia')
-        geo_loc_ocorrencias['poupup']= ' data '+geo_loc_ocorrencias['Data da Ocorrência'].map(str)+' '+geo_loc_ocorrencias['praga']+ \
+        geo_loc_ocorrencias['poupup']= ' data '+geo_loc_ocorrencias['inserido'].map(str)+' '+geo_loc_ocorrencias['praga']+ \
                           ' '+geo_loc_ocorrencias['observacao']+ ' distancia=  '+geo_loc_ocorrencias['distancia'].map(str) +'km'
 
         m = folium.Map(location=[l1, l2], zoom_start=zoom, control_scale=True, width=1090, height=450)
@@ -257,13 +259,13 @@ def mostra_ocorrencia(request):
             'm': m._repr_html_()
         }
 
-        print(lista_distancia )
+
 
 
         return render(request, 'core/mapa.html',context)
 
     else:
-        print(contador)
+
         messages.info(request,'Não existem informações para exibir!')
         return render(request, 'core/mapa.html')
 
@@ -271,8 +273,19 @@ def mostra_ocorrencia(request):
 def mostra_tabela(request):
     registros = Tb_Registros.objects.select_related('usuario').filter(ativo=True).\
         values('id_ocorrencia','inserido','nome_propriedade','cultura','praga','hectares','prejuizo','status','imagem','observacao')
-  
-    print(registros)
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    if start_date and end_date:
+
+        registros = registros.filter(
+            inserido__date__range=[start_date,end_date]
+        )
+
+
+    tabela_paginator = Paginator(registros, 5)
+    page_num = request.GET.get('page')
+    page = tabela_paginator.get_page((page_num))
+
     context = {
-        'registros': registros }
+        'page': page }
     return render(request, 'core/ocorrencias.html', context)

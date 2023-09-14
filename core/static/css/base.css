@@ -18,28 +18,33 @@ img {
   border-radius: 5px 5px 0 0;
 }
 td, th {
-  padding: .7em;
+  padding: .4em;
   margin: 0;
   border: 1px solid #ccc;*/
   text-align: center;
+white-space: pre-wrap;
+ word-wrap: break-word;
 }
 
 th{
-  background-color:	#F8F8FF;*/
+  background-color:	#F5FFFA;
 }
 td{
 
-  background-color:#F8F8FF;
+  background-color:#F0FFFF;
 }
 
 table{
 
-  margin-bottom : 50em;
-  table-layout: fixed;
+
+table-layout: fixed;
   text-align: center;
   align: center;
   border-spacing: 1px 1px;
   bordercolor:	#5CACEE;
+white-space: pre-wrap;
+            border-spacing: 0px;
+            table-layout: fixed;
 
 }
 

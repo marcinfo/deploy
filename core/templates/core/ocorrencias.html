@@ -3,49 +3,65 @@
 {% block title %}Ocorrências{% endblock %}
 
 {% block content %}
+    <div >
+      <div>
+      <form class=="form-inline my-2 my-lg-0 pull-right">
+        <label>Data Inicial  </label>
+        <input  class="form-control ml-sm-2" name="start_date" type="date"/>
+        <label>Data Final  </label>
+        <input  class="form-control ml-sm-2" name="end_date" type="date"/>
+      </div>
 
-<html>
-  <body>
-    <table>
-      <thead>
-        <tr>
-          <th>id</th>
-          <th>Data de Registro</th>
-          <th>Propriedade</th>
-          <th>Cultura</th>
-          <th>Praga</th>
-          <th>Hectares afetados</th>
-          <th>Prejuizo R$</th>
-          <th>Status</th>
-          <th>Imagem</th>
-          <th>Observações</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for reg in registros %}
-        <tr>
-          <td>{{reg.id_ocorrencia}}</td>
-          <td>{{reg.inserido}}</td>
-          <td>{{reg.nome_propriedade}}</td>
-          <td>{{reg.cultura}}</td>
-          <td>{{reg.praga}}</td>
-          <td>{{reg.hectares}}</td>
-          <td>{{reg.prejuizo}}</td>
-          <td>{{reg.status}}</td>
-          <td><a href="/media/{{reg.imagem}}">imagem</a></td>
-          <td>{{reg.observaacao}}</td>
+    </div>
+<button class="btn-primary my-2 my-sm-0 type=submit">  Pesquisar  </button>
 
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
+  </div>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead class="thead-dark">
+      <tr nowrap="true">
 
-  <form >
-<div>
+        <th scope="col">id</th>
+        <th scope="col">Data</th>
+        <th scope="col">Propriedade</th>
+        <th scope="col">Cultura</th>
+        <th scope="col">Praga</th>
+        <th scope="col">Hectares</th>
+        <th scope="col">Prejuizo R$</th>
+        <th scope="col">Status</th>
+        <th scope="col">Imagem</th>
+        <th scope="col">Observações</th>
+      </tr>
+    </thead>
+    <tbody>
 
+          {% for reg in page.object_list %}
+          <tr>
+            <td>{{reg.id_ocorrencia}}</td>
+            <td>{{reg.inserido|date:'d-m-Y H:i'}}</td>
+            <td>{{reg.nome_propriedade}}</td>
+            <td>{{reg.cultura}}</td>
+            <td>{{reg.praga}}</td>
+            <td>{{reg.hectares}}</td>
+            <td>{{reg.prejuizo|floatformat:2}}</td>
+            <td>{{reg.status}}</td>
+            <td><a href="/media/{{reg.imagem}}">Click aqui</a></td>
+            <td nowrap="true">{{reg.observacao}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if page.has_previous %}
+      <a href="{% url 'ocorrencias' %}?page={{page.previous_page_number}}"> Anterior </a>
+
+    {% endif %}
+    {% if page.has_next %}
+      <a href="{% url 'ocorrencias' %}?page={{page.next_page_number}}"> Próxima </a>
+    {% endif %}
 </div>
 
-  </form>
+
+
+
+
 {% endblock %}

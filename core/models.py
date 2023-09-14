@@ -9,7 +9,8 @@ CONTROLE_CHOICE=(
     ("Fora de Controle","Fora de Controle"),
 )
 class Base(models.Model):
-    inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True,editable=False)
+    inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True
+                                    )
     atualizado = models.DateTimeField(verbose_name="Atualizado em:", auto_now=True, null=True)
     ativo = models.BooleanField('Ativo?', default=True)
 
@@ -55,7 +56,7 @@ lista_cultura = TbPragas.objects.select_related('cultura').values_list('cultura'
 class Tb_Registros(Base):
     id_ocorrencia = models.AutoField(primary_key=True)
     usuario =  models.CharField(max_length=45)
-    data_registro =  models.DateField(name='Data da Ocorrência',help_text='Data em que foi visualizada a praga.')
+
     praga = models.CharField(max_length=40,choices=lista_praga,help_text='Selecione qual o tipo de praga esta contaminando.')
     cultura =  models.CharField(verbose_name='Cultura',max_length=45,choices=lista_cultura,
                                 help_text='Qual plantação foi contaminada?',null=True,blank=True)
@@ -67,7 +68,7 @@ class Tb_Registros(Base):
     latitude = models.CharField(max_length=45)
     longitude = models.CharField(max_length=45)
     imagem = StdImageField('Imagem',upload_to='images',help_text='Selecione as imagens da praga.',null=True,blank=True)
-    observacao = models.TextField(verbose_name='Observações',null=True,blank=True)
+    observacao = models.CharField(max_length=200,verbose_name='Observações',null=True,blank=True)
 
     class Meta:
 
