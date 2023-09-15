@@ -6,6 +6,7 @@
 <head>
   <meta charset="="UTF-8>
   <title>{% block title %}{% endblock %}</title>
+  <link rel="icon" href="{% static 'images/favicon.png' %}">
   <link href="{% static "css/base.css" %}" rel="stylesheet">
 
 </head>
@@ -14,20 +15,19 @@
     <span class="logo">Monitor de Pragas</span>
      <ul class="menu">
        <li {% if section == "index" %}class="selected"{% endif %}>
-            <a href="{% url "index" %}">Inicio</a>
+            <a href="{% url "index" %}">Painel</a>
        </li>
-      <li {% if section == "mapa" %}class="selected"{% endif %}>
-          <a href="{% url "mapa" %}">Mapa</a>
+     </ul>
+    {% if request.user.is_authenticated %}
+    <ul class="menu">
+      <li {% if section == "cadastrar" %}class="selected"{% endif %}>
+        <a href="{% url "cadastrar" %}">Cadastrar</a>
       </li>
       <li {% if section == "ocorrencias" %}class="selected"{% endif %}>
           <a href="{% url "ocorrencias" %}">Ocorrências</a>
       </li>
-     </ul>
-    {% if request.user.is_authenticated %}
-    <ul class="menu">
-
-      <li {% if section == "cadastrar" %}class="selected"{% endif %}>
-        <a href="{% url "cadastrar" %}">Cadastrar</a>
+      <li {% if section == "mapa" %}class="selected"{% endif %}>
+          <a href="{% url "mapa" %}">Mapa</a>
       </li>
       <li {% if section == "dashboard" %}class="selected"{% endif %}>
         <a href="{% url "dashboard" %}">Minha Conta</a>
@@ -38,7 +38,6 @@
     {% if request.user.is_authenticated %}
       Olá,  {{ request.user.first_name }}.
       <a href="{% url "logout" %}">   Sair</a>
-
     {% else %}
       <a href="{% url "login" %}"> Entrar</a>
     {% endif %}

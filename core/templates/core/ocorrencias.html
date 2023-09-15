@@ -37,7 +37,7 @@
 
           {% for reg in page.object_list %}
           <tr>
-            <td><a href="{% url 'visualizar_imagem' reg.id_ocorrencia %}">{{reg.id_ocorrencia}}</a></td>
+            <td><a type="hidden" href="{% url 'visualizar_imagem' reg.id_ocorrencia %}">{{reg.id_ocorrencia}} </a></td>
             <td>{{reg.inserido|date:'d-m-Y H:i'}}</td>
             <td>{{reg.nome_propriedade}}</td>
             <td>{{reg.cultura}}</td>

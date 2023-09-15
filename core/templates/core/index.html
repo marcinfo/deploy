@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}Painel{% endblock %}
 
 {% block content %}
 <meta http-equiv="refresh" content="30"/>
@@ -13,89 +13,60 @@
     <div class="card red">
         <h>Hectares</h>
         <p>{{total_hectares}}</p>
-
     </div>
     <div class="card blue">
         <h>Prejuizo </h>
         <p>R$ {{total_prejuizo|floatformat:2}}</p>
-
     </div>
-
     <div class="card negativo">
         <h>tipos de pragas:</h>
         <p>{{tipo_praga}}</p>
-
     </div>
     <div class="card green">
         <h>Culturas atacadas:</h>
-
         <p>{{tipo_cultura}}</p>
-
     </div>
 </div>
-
-
-
-
 </div>
 <div class="row">
-
     <div>
-
-
     </div>
         <div>
     <span>
         {{chart_graf_grupo_cultura|safe}}
-
     </span>
-
     </div>
     <div>
     <span>
         {{chart_graf_grupo_praga|safe}}
     </span>
-
     </div>
         <div>
     <span>
         {{graf_grupo_hectar_prejuizo|safe}}
-
     </span>
-
     </div>
-
 </div>
 <div class="row">
-
     <div>
-
-
     </div>
         <div>
     <span>
         {{chart_graf_grupo_praga_prejuizo|safe}}
-
     </span>
-
     </div>
     <div>
     <span>
         {{chart_graf_grupo_cultura_prejuizo|safe}}
     </span>
-
     </div>
         <div>
     <span>
-
         {{chart_graf_grupo_status|safe}}
     </span>
-
     </div>
 {{graf_data|safe}}
 </div>
 </body>
 </html>
-
-
 {% endblock  %}

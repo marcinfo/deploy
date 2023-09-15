@@ -1,20 +1,17 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+import folium
+import pandas as pd
+import plotly.express as px
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Profile,Tb_Registros,TbPragas
-from .forms import LoginForm, UserRegistrationForm, \
-                   UserEditForm, ProfileEditForm,RegistrosModelForm
-import pandas as pd
-from django.db.models import Avg,Count,Max,Min,Sum
 from django.core.paginator import Paginator
-import folium
-import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+from django.db.models import Count
+from django.http import HttpResponse
+from django.shortcuts import render
 from geopy import distance
-
+from .forms import LoginForm, UserRegistrationForm, \
+    UserEditForm, ProfileEditForm, RegistrosModelForm
+from .models import Profile, Tb_Registros
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -35,8 +32,6 @@ def user_login(request):
     else:
         form = LoginForm()
     return render(request, 'core/login.html', {'form': form})
-
-
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
@@ -58,12 +53,9 @@ def register(request):
     return render(request,
                   'core/register.html',
                   {'user_form': user_form})
-
-
 @login_required
 def dashboard(request):
     return render(request, 'core/dashboard.html', {'section': 'dashboard'})
-
 @login_required
 def edit(request):
     if request.method == 'POST':
@@ -86,33 +78,19 @@ def edit(request):
                   'core/edit.html',
                   {'user_form': user_form,
                    'profile_form': profile_form})
-
-
-
 def index(request):
     registros = Tb_Registros.objects.select_related('usuario').all().filter(ativo=True).values()
-
-
     contador =registros.count()
     if contador != 0:
-
         praga_afetada = Tb_Registros.objects.values('praga').annotate(total=Count('praga')).order_by("-total")
         status_conta = Tb_Registros.objects.values('status').annotate(total=Count('praga')).order_by("-total")
         dados = pd.DataFrame(registros)
-
-
-
-
         reg_ocorrencias = pd.DataFrame(registros)
         total=reg_ocorrencias['id_ocorrencia'].count()
         total_prejuizo = reg_ocorrencias['prejuizo'].sum()
         total_hectares = reg_ocorrencias['hectares'].sum()
         tipo_praga=reg_ocorrencias.groupby('praga')['praga'].unique().count()
         tipo_cultura = reg_ocorrencias.groupby('cultura')['cultura'].unique().count()
-
-
-
-
         config={'displayModeBar':False}
         fonte_titulo='Times New Roman'
         largura= 400
@@ -134,19 +112,13 @@ def index(request):
                                          yaxis_title={'text':'ocorrências','font':{'size':12}},
                                          xaxis_title={'text': 'cultura', 'font': {'size': 12}})
         chart_graf_grupo_praga = graf_grupo_praga.to_html(config = config)
-
-
-
         graf_grupo_status= px.pie(status_conta, values='total', names='status',height=320,width=320, hole=.6)
-
         graf_grupo_status.update_layout(title={'text':'Status das Pragas.','font':{'size':16}}, title_font_family=fonte_titulo,
                                          title_font_color='darkgrey',title_y=0.9,title_x=0.5)
         graf_grupo_status.update_layout(title_font_family='classic-roman',font_color='grey',showlegend=True,
                                          yaxis_title={'text':'total','font':{'size':12}},
                                          xaxis_title={'text': 'status', 'font': {'size': 12}})
         chart_graf_grupo_status = graf_grupo_status.to_html(config = config)
-
-
         graf_grupo_praga_prejuizo= px.histogram(dados, x=dados['praga'], y=dados['prejuizo'].astype(float),
                       height=altura,width=largura,template='simple_white',color_discrete_sequence=['#66CDAA'])
         graf_grupo_praga_prejuizo.update_layout(title={'text':'Prejuizo por Praga.','font':{'size':16}}, title_font_family=fonte_titulo,
@@ -155,7 +127,6 @@ def index(request):
                                          yaxis_title={'text':'R$','font':{'size':12}},
                                          xaxis_title={'text': 'praga', 'font': {'size': 12}})
         chart_graf_grupo_praga_prejuizo = graf_grupo_praga_prejuizo.to_html(config = config)
-
         graf_grupo_cultura_prejuizo= px.histogram(dados, x=dados['cultura'], y=dados['prejuizo'].astype(float),
                       height=altura,width=largura,template='simple_white',color_discrete_sequence=['#66CDAA'])
         graf_grupo_cultura_prejuizo.update_layout(title={'text':'Prejuizo por Cultura.','font':{'size':16}}, title_font_family=fonte_titulo,
@@ -164,7 +135,6 @@ def index(request):
                                          yaxis_title={'text':'R$','font':{'size':12}},
                                          xaxis_title={'text': 'cultura', 'font': {'size': 12}})
         chart_graf_grupo_cultura_prejuizo = graf_grupo_cultura_prejuizo.to_html(config = config)
-
         graf_grupo_hectar_prejuizo= px.histogram(registros,  y=['prejuizo'],
                       height=altura,width=largura,template='simple_white',color_discrete_sequence=['Purple'])
         graf_grupo_hectar_prejuizo.update_layout(title={'text':'Prejuizo por hectar.','font':{'size':16}}, title_font_family=fonte_titulo,
@@ -173,7 +143,6 @@ def index(request):
                                          yaxis_title={'text':'R$','font':{'size':12}},
                                          xaxis_title={'text': 'hectares', 'font': {'size': 12}})
         graf_grupo_hectar_prejuizo = graf_grupo_hectar_prejuizo.to_html(config = config)
-
         context = {
             'total': total, 'total_prejuizo': total_prejuizo, 'tipo_praga': tipo_praga,'total_hectares': total_hectares,
             'praga_afetada':praga_afetada,'tipo_cultura': tipo_cultura,'chart_graf_grupo_cultura':chart_graf_grupo_cultura,
@@ -189,7 +158,7 @@ def index(request):
         return render(request, 'core/index.html')
 
 
-
+@login_required
 def cadastrarForm(request):
 
     if request.method == "GET":
@@ -211,7 +180,7 @@ def cadastrarForm(request):
         }
         return render(request, 'core/cadastrar.html', context=context)
 
-
+@login_required
 def mostra_ocorrencia(request):
     registros = Tb_Registros.objects.all().values()
     contador =registros.count()
@@ -258,10 +227,6 @@ def mostra_ocorrencia(request):
             'vacin': 'Veja as ocorrencias mais proximas da sua localização.',
             'm': m._repr_html_()
         }
-
-
-
-
         return render(request, 'core/mapa.html',context)
 
     else:
@@ -270,6 +235,7 @@ def mostra_ocorrencia(request):
         return render(request, 'core/mapa.html')
 
 
+@login_required
 def mostra_tabela(request):
     registros = Tb_Registros.objects.select_related('usuario').filter(ativo=True).\
         values('id_ocorrencia','inserido','nome_propriedade','cultura','praga','hectares','prejuizo','status','imagem','observacao')
@@ -290,10 +256,26 @@ def mostra_tabela(request):
 @login_required
 def visualizar_imagem(request,pk):
     registro = Tb_Registros.objects.select_related('usuario').filter(ativo=True, id_ocorrencia=pk).\
-        values('id_ocorrencia','inserido','nome_propriedade','cultura','praga','hectares','prejuizo','status','imagem','observacao')
-
-
+        values('id_ocorrencia','inserido','nome_propriedade','cultura','praga','hectares','prejuizo',
+               'status','imagem','observacao')
     print(registro)
     context = {
         'registro': registro }
     return render(request, 'core/visualizar_imagem.html',context)
+
+def erro_400(request,exception):
+
+    return render(request, 'core/erro_404.html')
+
+def handler500(request, *args, **argv):
+    return render(request, '500.html', status=500)
+def handler400(request, exception):
+    return render(request, 'core/erro_400.html',status=400)
+def handler401(request, exception):
+    return render(request, 'core/erro_401.html',status=401)
+def handler402(request, exception):
+    return render(request, 'core/erro_402.html',status=402)
+def handler403(request, exception):
+    return render(request, 'core/erro_403.html',status=403)
+def handler404(request, exception):
+    return render(request, 'core/erro_404.html',status=404)
